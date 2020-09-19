@@ -37,9 +37,7 @@ pub use frame_support::{
 		constants::{BlockExecutionWeight, ExtrinsicBaseWeight, RocksDbWeight, WEIGHT_PER_SECOND},
 	},
 };
-
-/// Import the template pallet.
-pub use template;
+pub use chainlink_example_pallet::Call as ExampleCall;
 
 /// An index to a block.
 pub type BlockNumber = u32;
@@ -92,8 +90,8 @@ pub mod opaque {
 }
 
 pub const VERSION: RuntimeVersion = RuntimeVersion {
-	spec_name: create_runtime_str!("node-template"),
-	impl_name: create_runtime_str!("node-template"),
+	spec_name: create_runtime_str!("substrate-chainlink-node"),
+	impl_name: create_runtime_str!("substrate-chainlink-node"),
 	authoring_version: 1,
 	spec_version: 1,
 	impl_version: 1,
@@ -257,9 +255,20 @@ impl pallet_sudo::Trait for Runtime {
 	type Call = Call;
 }
 
-/// Configure the pallet template in pallets/template.
-impl template::Trait for Runtime {
+impl pallet_chainlink::Trait for Runtime {
 	type Event = Event;
+	type Currency = Balances;
+	type Callback = ExampleCall<Runtime>;
+	type ValidityPeriod = ValidityPeriod;
+}
+
+impl chainlink_example_pallet::Trait for Runtime {
+	type Event = Event;
+	type Callback = ExampleCall<Runtime>;
+}
+
+parameter_types! {
+	pub const ValidityPeriod: u32 = 50;
 }
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
@@ -277,8 +286,10 @@ construct_runtime!(
 		Balances: pallet_balances::{Module, Call, Storage, Config<T>, Event<T>},
 		TransactionPayment: pallet_transaction_payment::{Module, Storage},
 		Sudo: pallet_sudo::{Module, Call, Config<T>, Storage, Event<T>},
-		// Include the custom logic from the template pallet in the runtime.
-		TemplateModule: template::{Module, Call, Storage, Event<T>},
+
+		// Declare the chainlink pallet
+		Chainlink: pallet_chainlink::{Module, Call, Storage, Event<T>},
+		Example: chainlink_example_pallet::{Module, Call, Storage},
 	}
 );
 
@@ -423,7 +434,7 @@ impl_runtime_apis! {
 			None
 		}
 	}
-	
+
 	impl frame_system_rpc_runtime_api::AccountNonceApi<Block, AccountId, Index> for Runtime {
 		fn account_nonce(account: AccountId) -> Index {
 			System::account_nonce(account)
