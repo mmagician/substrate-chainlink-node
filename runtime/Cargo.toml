@@ -200,8 +200,7 @@ version = '1.0.5'
 [dependencies.pallet-chainlink]
 default-features = false
 package = 'pallet-chainlink'
-#git = 'https://github.com/mmagician/chainlink-polkadot.git'
-path = '/Users/marcin/dev/chainlink-polkadot/pallet-chainlink'
+git = 'https://github.com/mmagician/chainlink-polkadot.git'
 version = '2.0.0'
 
 [dependencies.chainlink-example-pallet]

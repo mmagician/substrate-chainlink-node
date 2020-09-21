@@ -3645,6 +3645,7 @@ dependencies = [
 [[package]]
 name = "pallet-chainlink"
 version = "2.0.0"
+source = "git+https://github.com/mmagician/chainlink-polkadot.git#eee08af34f2f146f62abb61ce720093cd1246db1"
 dependencies = [
  "frame-support",
  "frame-system",
